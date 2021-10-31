@@ -1,0 +1,159 @@
+---
+title: "stat-3110-Homwork9"
+author: "Jose Cruz"
+date: "10/30/2021"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+#knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+
+
+# Homework 9 
+
+
+## Question 1 : For the prostate data in package faraway, fit a linear regression model with lpsa as the response variable and the other variables as predictors.
+
+### (a) Check the constant variance assumption by plotting standardized residual vs fitted values;
+
+```{r}
+
+library(faraway)
+data(prostate,package = "faraway")
+
+prostateModel <-lm(lpsa~., data = prostate)
+
+summary(prostateModel)
+
+residuals(prostateModel)
+
+
+plot(fitted(prostateModel), residuals(prostateModel), xlab="Fitted", ylab="Residuals")
+plot(sModel)
+
+
+
+
+```
+
+
+
+
+### (b) Check the normality assumption by using QQ plot;
+
+```{r}
+#Nomrallity  assumption with qq plot
+
+
+qqnorm(residuals(prostateModel), ylab="Residuals")
+#qqline(residuals(prostateModel)) doesnt work for some reason.
+
+```
+
+
+### (c) Check for any leverage points and generate a half normal plot of hat values;
+
+```{r}
+#calculate the leverage points 
+
+hatv <- hatvalues(prostateModel) ## Calculate leverages
+head(hatv)
+
+hatv[which(hatv>2*mean(hatv))]
+```
+
+
+
+
+```{r}
+
+# generates the half normal plot for leverage points
+halfnorm(hatv, nlab=4, labs=row.names(prostate), ylab="Leverages")
+```
+
+### (d) Check for any outliers in the data set;
+
+
+```{r}
+# calculate outlier in our data set
+#prostateModel.head()
+#plot(y~x, rbind(testdata, p1))
+
+#plot(prostate$lcavol,prostate$lweight,xlab="log(lcavol)", ylab="log(lweight)")
+
+
+
+
+stud <- rstudent(prostateModel)
+max(abs(stud))
+
+#lmod <- lm(lcavol~lweight, data=prostate)
+#abline(lmod)
+#range(rstudent(lmod))
+
+```
+
+
+### (e) Check for any influential data points.
+
+```{r pressure, echo=FALSE}
+cook <- cooks.distance(prostateModel)
+library(faraway)
+halfnorm(cook, nlab=3, labs=row.names(prostate), ylab="Cook statistics")
+```
+
+## Question 2. (problem 5 on page 110) For the prostate data, fit a model with lpsa as the response and the other variables as predictors.
+
+
+
+###(A) Compute and comment on the condition numbers;
+```{r}
+#Calculate the conditional numbers(co linearity)
+
+summary(prostateModel)
+
+
+
+```
+
+#### Conditional numbers
+```{r}
+
+x <- model.matrix(prostateModel)[, -1]
+e <- eigen(t(x)%*%x)
+e$val
+
+```
+
+```{r}
+kappa <- sqrt(e$val[1]/e$val)
+kappa>30
+```
+
+
+
+###(B) Compute an comment on the correlations between the predictors;
+```{r}
+round(cor(prostate[, -8]), 2)
+```
+
+
+###(C) Compute the variance inflation factors (VIFs).
+```{r}
+
+Rj2 <- summary(lm(x[, 1]~x[, -1]))$r.squared
+1/(1-Rj2)
+
+```
+
+```{r}
+
+vif(prostateModel)
+
+
+```
+

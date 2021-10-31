@@ -1,0 +1,192 @@
+---
+title: "homework_4"
+author: "Jose Cruz"
+date: "9/19/2021"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+# Homework 4
+
+## Question 1
+
+The data set prostate(in R package "faraway") is from a study on 97 men with prostate cancer who were due to receive a radical prostatectomy.
+
+Fit a model with lpsa as the response variable (y) and lcavol as the predictor variable (x)and answer the following questions:
+
+### 1. Construct the analysis of variance table (ANOVA) and test for significance of regression;
+
+```{r setup, include=FALSE}
+
+library(faraway)
+
+x_prostate <- prostate$lcavol
+
+y_prostate <- prostate$lpsa
+
+
+data(prostate,package = "faraway")
+
+fitted_model <- lm(y_prostate~x_prostate,data= prostate)
+
+
+anova(fitted_model)
+
+
+
+```
+
+The anova table above demonstrates that we have a F score of 111.27 and SSR being 69.003 and SSE being 58.915
+
+### 2.Calculate the coefficient of determination (R\^2)
+
+```{r cars}
+# r^2 = SSR/SST, sst=ssr+sse
+summary(fitted_model)
+```
+
+The calculated coefficient of determination (r\^2) is found in our LM function, looking at the Residual standard error we can see we get 0.7875.
+
+### 3. Find a 95% confidence interval on the slope (β1);
+
+```{r}
+n <-length(y_prostate)
+SSRes <-sum(fitted_model$residuals^2)
+MSReS <- SSRes/(n-2)
+Sxx <-sum((x_prostate-mean(x_prostate))^2)
+se <- sqrt(MSReS/Sxx)
+t.critical <-qt(0.975,df=n-2)
+
+
+LL.beta1 <- coef(fitted_model)[2]-t.critical*se
+
+UL.beta1 <- coef(fitted_model)[2]+t.critical*se
+
+CI.beta1 <- c(LL.beta1,UL.beta1)
+names(CI.beta1) <- c("2.5%", "97.5%")
+CI.beta1
+
+```
+
+For the 95 percent confidence interval on the slope of beta 1 we get a lower bound of 0.5839402 and a upper bound of 0.8547001 for the confidence interval of beta 1.
+
+### 4. Find a 95% confidence interval on the mean lpsa(Y) when lcavol= 1.35 (X): 
+
+```{r}
+x_bar <-mean(x_prostate)
+
+
+SSRes <-sum(fitted_model$residuals^2)
+MSReS <- SSRes/(n-2)
+
+sxx <- sum((x_prostate-x_bar)^2)
+
+x0 <-1.35
+
+beta0 <-fitted_model$coefficients[1]
+beta1 <-fitted_model$coefficients[2]
+mu_hat <-beta0+beta1*x0 # just makes the formula
+
+lower_limit <- mu_hat-t.critical*sqrt(MSReS*(1/n+(x0-x_bar)^2/sxx))
+                 
+lower_limit
+                                                                                                 
+ul <- mu_hat+t.critical*sqrt(MSReS*(1/n+(x0-x_bar)^2/Sxx))
+
+ul
+
+```
+
+When we find the 95 percent confidence interval on the mean of lpsa when lcavol= 1.35 we a lower limit of 1.935894 and a upper limit of 3.020866 .
+
+### 5.Calculate a 95% prediction interval of lps a when lcavol= 1.35.
+
+```{r}
+#prediction interval
+
+y_hat <- beta0+beta1*x0
+
+LL <- y_hat-t.critical*sqrt(MSReS*(1+1/n+(x0-x_bar)^2/Sxx))
+
+UL <- y_hat+t.critical*sqrt(MSReS*(1+1/n+(x0-x_bar)^2/Sxx))
+
+
+LL
+UL
+```
+
+Our outcome for our prediction interval at 95 percent when lcavol= 1.35 is a lower limit of -0.542 and a upper limit of 5.499
+
+## Problem 2
+
+Hsuie, Ma and Tsai studied the effect of the molar ratio of sebacic acid (the predictor variable) on the intrinsic viscosity of copolyesters (the response variable). The table gives the data.Fit a linear regression model and answer the following questions.
+
+### 1.Find a 95% confidence interval on the slope (β1).
+
+```{r}
+
+#beta 1 95 percent confidence interval
+
+y_Visocity <- c(0.45,0.2,0.34,0.58,0.7,0.57,0.55,0.44)
+x_Ratio<- c(1.0,0.9,0.8,0.7,0.6,0.5,0.4,0.3)
+
+visocityModel <- lm(y_Visocity~x_Ratio,data=prostate)
+
+confint(visocityModel,level=0.95)
+
+
+ 
+```
+
+Confidence interval for beta 1 slope of between -0.86 and 0.27
+
+### 2. A 95% confidence interval on the mean viscosity when ratio= 0.65:
+
+```{r}
+#
+x_bar <-mean(x_Ratio)
+n <- length(y_Visocity)
+
+SSRes <-sum(visocityModel$residuals^2)
+MSReS <- SSRes/(n-2)
+
+sxx <- sum((x_Ratio-x_bar)^2)
+
+x0 <-0.65
+
+beta0 <-visocityModel$coefficients[1]
+beta1 <-visocityModel$coefficients[2]
+mu_hat <-beta0+beta1*x0 # just makes the formula
+t.critical <-qt(0.975,df=n-2)
+lower_limit <- mu_hat-t.critical*sqrt(MSReS*(1/n+(x0-x_bar)^2/sxx))
+                 
+lower_limit
+                                                                                                 
+ul <- mu_hat+t.critical*sqrt(MSReS*(1/n+(x0-x_bar)^2/Sxx))
+
+ul
+
+
+
+
+```
+
+Calulating the confidence interval at 95 precent for when ratio equals 0.65 we get a lower bound of 0.349 and a upper bound of 0.609
+
+### 3. Find a 95% prediction interval for viscosity when ratio= 0.65.
+
+```{r}
+
+y_hat <- beta0+beta1*x0
+
+LL <- y_hat-t.critical*sqrt(MSReS*(1+1/n+(x0-x_bar)^2/Sxx))
+
+UL <- y_hat+t.critical*sqrt(MSReS*(1+1/n+(x0-x_bar)^2/Sxx))
+
+
+LL
+UL
+```
+
+The calculations for a 95 percent prediction interval when ratio equals 0.65 is a lower limit of 0.089 and a upper limit of 0.868.

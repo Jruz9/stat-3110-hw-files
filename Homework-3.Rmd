@@ -1,0 +1,111 @@
+---
+title: "Homework-3"
+output:
+  word_document: default
+  pdf_document: default
+  html_notebook: default
+---
+
+# Question 1
+
+## Suppose there are n pairs of data that are denoted as(x1,y1),(x2,y2),···,(xn,yn), and you try to fit a simple linear modelyi=β0+β1xi+εiby using the data to estimate the unknown parameters. Assume that E(εi) = 0, and V ar(εi) =σ2, and εi,i= 1,2,···,nare uncorrelated. Show thatSST=SSR+SSRes, whereSST=∑ni=1(yi− ̄y)2, SSRes=∑ni=1(yi−ˆyi)2 and SSR=∑ni=1(ˆyi− ̄y)\^2.
+
+## ![](images/20210913_194553.jpg)
+
+# Question 2
+
+## Thirty samples of cheddar cheese were analyzed for their content of acetic acid, hydrogen sulfide and lactic acid. Each sample was tasted and scored by a panel of judges and the average taste score produced. Use the cheddar data in package faraway to answer the following:
+
+# Question 2.1
+
+## Fit a simple linear regression model with taste as the response and one chemical content H2S as the predictor variable. Report the values of the fitted regression coefficients.
+
+```{r}
+library(faraway)
+data(cheddar,package="faraway")
+
+linearReg<- lm(taste~H2S,data = cheddar)
+
+plot(cheddar$H2S,cheddar$taste, xlab="H2S", ylab='taste',
+	main="Taste vs H2s", cex=1)
+abline(linearReg, cex=1, col="red")
+summary(linearReg)
+```
+
+-   B0= -9.7868
+
+<!-- -->
+
+-   B1= 5.7761
+
+<!-- -->
+
+-   The fitted linear regression is y= -9.7868+5.7761x
+
+# Question 2.2
+
+## If H2S is increased 1 for the fitted model, what change in the taste would be expected based on your fitted model?
+
+-   If we increase H2S by 1 the changes in taste would not be significant due to the increase in the floor and taste would stay the same.
+
+# Question 2.3
+
+## Construct the analysis-of-variance (ANOVA) table and test for significance of regression.
+
+```{r}
+
+x <-cheddar$H2S
+y <-cheddar$taste
+
+fit <- lm(y~x)
+n <- length(y)
+SST <- sum((y-mean(y))^2)
+SSR <- sum((fit$fitted.value-mean(y))^2)
+SSRes <- sum((fit$residuals)^2)
+F0 <- (SSR/1)/(SSRes/(n-2))
+F.critical <- qf(0.95, 1, n-2)
+p.value <- pf(F0, 1, n-2, lower.tail=F)
+F0
+F.critical
+p.value
+anova(linearReg)
+```
+
++------------------------+-------------------+-----------------------+----------------+------------+------------+
+| \| Source Of variation | \| Sum of Squares | \| Degrees of freedom | \| Mean square | \| f-score | \| p-value |
++========================+===================+=======================+================+============+============+
+| Regression             | 4376.7            | 1                     | 4376.7         | 37.293     | 1.374e-06  |
++------------------------+-------------------+-----------------------+----------------+------------+------------+
+| Residual               | 3286.1            | 28                    | 117.4          |            |            |
++------------------------+-------------------+-----------------------+----------------+------------+------------+
+| Total                  | 7,662.8           | 29                    |                |            |            |
++------------------------+-------------------+-----------------------+----------------+------------+------------+
+
+# Question 2.4
+
+## Calculate t statistics for testing the null hypotheses H0:β1= 0 vs H1:β16= 0.What conclusion can you draw about the role the variable H2S play in the model?
+
+```{r}
+#fit <- lm(y~x)
+#beta1 <- linearReg$coefficients[2]
+#beta1 <- linearReg$coefficients[2]#
+#beta1 <- linearReg$coe#fficients[2]#
+#beta1 <- line#arReg$coe#fficients[2]#n-2)
+#beta1 <- line#arReg$coe##fficients[2]#
+#beta1 <- line##arReg$coe##fficients[2]#, lower.tail=FALSE)
+#beta1 <- line##arReg$coe##fficients[2]##
+#beta1 <- line##arReg$coe##fficients#[2]##
+
+
+summary(linearReg)
+```
+
+-   In calculating the T score and later getting the P value, When we compare the Hypothesis of b1 =0 we get the result p-value=1.37e-06 and alpha = 0.05. When comparing our alpha with our p- value 1.37e-06 \<0.05 it shows that we can reject the null hypothesis and that the regression is significant.
+
+# Question 2.5
+
+## How is the F statistic for significance of regression related to the t-test statistic calculated in part (d)
+
+-   The T statistic calculated for H2S in part d was 6.107 with a p score of 5.446942e-38. Squaring the T-score will equal 37.295449 which is very close to our f score. The F statistic calculated in part c was 37.29265 with f critical being 4.195972 and p-value being 1.373783e-06.
+
+-   The F statistic and T statistic can both be used to for the same job of figuring if regression is behaving the way we expect because T\^2 and F0 both equal each other and can be applied for the same job in most cases.

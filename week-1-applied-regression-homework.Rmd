@@ -1,0 +1,175 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## problem 1
+
+The data set teengamb(in R package “faraway”, you will need to install the package in R) concerns a study of teenage gambling in Britain
+
+### 1. For each variable in the data set, make a numerical summary and comment of any features youfind interesting (range, mean, five number summary statistics).
+```{r}
+#load library
+library("faraway")
+
+#loads the teen gambling dataset in the faraway complete set
+data(teengamb,package="faraway")
+
+#summary of each column with the 6 most basic functions of stats
+summary(teengamb)[,1:5]
+
+```
+
+
+commenting on the variables in this dataset I noticed some things:
+
+1. sex seems to be a categorical type of variable due to the min and max being only 2 numbers
+2. status seems seems to be more normally distributed  excluding the outlier in the end with a max of 15
+3. income seems to almost distributed  if we include that the mean is being affected by the outlier of 15 being the max
+4. verbal seems to be mostly clustered around 6-8 mostly with 1 being an outlier in the data
+5. gamble is an interesting variable, median on gambling is 6 but mean is 19.3 ans max is 156 so there are some outliers with heavy numbers that is skewing it right.
+________________________________________________________________________________________________________________________________________________
+
+### 3.  Make a histogram and describe its distribution for each quantitative variable in the data set.
+
+```{r}
+
+hist(teengamb$income,xlab="income",main = "")
+hist(teengamb$status,xlab="status",main = "")
+hist(teengamb$verbal,xlab="verbal",main = "")
+hist(teengamb$gamble,xlab="gamble",main = "") 
+
+```
+- income: distribution on the income seems to be right tail with most income being between 0-5
+ 
+- Status: status frequency seems to be around the same for most 
+
+- verbal: seems that verbal has a left tail distribution with most verbal levels being around 5-8
+
+- gamble: most of gambling variables are around 0-25 with a right tail distribution 
+
+
+
+
+
+### 2.  Are there categorical variables in the data set, if yes, which ones?
+```{r}
+
+#Test for sex (this is a binomial type so this can work) will classify the  note that 0 is female and 1 is male
+
+teengamb$sex <- factor(teengamb$sex)
+levels(teengamb$sex) <- c("male","female") #c makes a columns and makes changes
+summary(teengamb$sex)
+
+
+#Looks at first 10 sections of the dataset
+head(teengamb,n=10)
+
+```
+
+
+yes if we reassign the variables 0 and 1 to male and female we can see that each person is being catageroized.
+
+
+
+
+
+________________________________________________________________________________________________________________________________________
+
+### 4.  Make pairwise scatter plots (all pairwise). Any linear relationships between these variables?
+```{r}
+
+pairs(teengamb [,c(2:5)])
+require(ggplot2)
+
+ggplot(na.omit(teengamb), aes(x=income,y=gamble))+geom_point()
+```
+- There are some relationships that can be put together:
+
+
+- if we look at the income and gambling we can see most lower income people like to mostly participate in gambling.
+
+- Another relationship we can look is that verbal and status seem to have a correlation where if your verbal level is higher your status is higher lossly related but a interesting relation.
+
+
+## problem 3
+
+The data set prostate(in R package “faraway”) is from a study on 97 men with prostate cancer who were due to receive a radical prostate to my. Fit a linear model with lpsa as the response variable (y) and lcavol as the predictor variable (x) by using the lm function in R and answer the following questions based on your model fitting results:
+
+### 1. Make a scatter plot of the two variables (lpsa and lcavol), the figure needs to be included in your submission;
+```{r}
+library("faraway")
+
+data(prostate,package = "faraway")
+
+head(prostate) #has 8 variables and 1 categorical variable
+
+summary(prostate)
+
+
+library(ggplot2)
+ggplot(na.omit(prostate), aes(x=lcavol,y=lpsa))+geom_point()
+```
+
+
+### 2.  What is the fitted regression model?
+```{r}
+#make a bi variate linear regression model
+
+linearRegressionModel=lm(lpsa~lcavol,data = prostate)
+
+summary(linearRegressionModel)
+
+plot(prostate$lcavol,prostate$lpsa, xlab="lcavol", ylab='lpsa',
+	main="lcavol vs lpsa", cex=1)
+
+abline(linearRegressionModel, cex=1, col="red")
+
+
+#fitted regression values
+ggplot(na.omit(prostate), aes(x=lcavol,y=lpsa))+
+  geom_point(alpha=0.7)+ #observed data
+  geom_point(aes(x=lcavol, y=linearRegressionModel$fitted.values), #predicted data
+             color='red',alpha=0.5)+
+  geom_segment(aes(xend=lcavol, yend=linearRegressionModel$fitted.values),color='red',linetype='dashed',alpha=0.25)
+```
+
+- The fitted regression model is y=(1.50730)+(0.71932)xi for lcavol vs lpsa. 
+
+- fitted graphs are above ^
+
+
+
+### 3.  What is the estimate of σ2;
+```{r}
+
+#summary of linear relationship for the model
+summary(linearRegressionModel)
+
+
+sigmaSquared <-0.7875^2
+
+sigmaSquared
+
+```
+
+
+- The estimate of σ2 is 0.6201562. We use our stardard error and square the result to get our estimate variance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.

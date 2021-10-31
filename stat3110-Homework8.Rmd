@@ -1,0 +1,66 @@
+---
+title: "stat3110-Homework8"
+author: "Jose Cruz"
+date: "10/25/2021"
+output: word_document
+---
+
+# Homework 8
+
+```{r setup, include=FALSE}
+
+library(faraway)
+data(sat,package = "faraway")
+
+sModel <-lm(total~expend+ratio+salary+takers,data=sat)
+ 
+
+
+summary(sModel)
+
+
+```
+
+## A. Check the constant variance assumption by using residuals vs fitted value plot;
+
+```{r }
+
+residuals(sModel)
+
+
+plot(fitted(sModel), residuals(sModel), xlab="Fitted", ylab="Residuals")
+plot(sModel)
+#abline(h=0, col="red")
+
+
+```
+
+Preforming a constant Variance test using our residuals and fitted values, we can see that our model show there is nonlinearlity in our model and evidence of nonconstant variance as well.
+
+## B. Check if errors are uncorrelated by plotting successive pairs of residuals and the Durbin-Watson test.
+
+### Successive Pair of Residual Test
+
+```{r}
+summary(sModel)
+## Plot successive pairs of residuals
+n <- length(residuals(sModel))
+plot(tail(residuals(sModel), n-1), head(residuals(sModel), n-1),
+xlab=expression(hat(epsilon[i])), ylab=expression(hat(epsilon[i+1])))
+#abline(h=0, v=0, col=grey(0.75))
+
+#par(mfrow=c(1, 1))
+
+```
+
+In our Successive pair of residual test we find a negative correlation between successive pairs of residuals, indicating a negative serial correlation and shows errors are uncorrelated.
+
+### DW Test
+
+```{r}
+library(lmtest)
+
+dwtest(sModel)
+```
+
+Using our Durbin-watson test we see that our p value = 0.9459 and Dw = 2.4525. Looking at our p value we see that our model has low evidence of serial correlation.

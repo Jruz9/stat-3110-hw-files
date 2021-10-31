@@ -1,0 +1,99 @@
+---
+title: "Homework6"
+author: "Jose Cruz"
+date: "10/4/2021"
+output: word_document
+---
+
+# Homework 4
+
+## Problem 1
+
+### A.
+
+Fit a multiple regression model withtasteas the response and the three chemical contents as pre-dictors (Acetic, H2S, and, Lactic). Report the values of the regression coefficients (ˆβ0,ˆβ1,ˆβ2,ˆβ3).
+
+```{r setup, include=FALSE}
+#knitr::opts_chunk$set(echo = TRUE)
+
+#laoad datasets
+
+library(faraway)
+data(cheddar,package = "faraway")
+
+
+mutiLinearModel <-lm(taste~Acetic+H2S+Lactic,data = cheddar)
+
+summary(mutiLinearModel)
+
+
+
+```
+
+The regression coefficient are:
+
+-   b0: -28.8768
+-   b1: 0.3277
+-   b2: 3.9118
+-   b3: 19.6705
+
+### B.
+
+What change in the taste would be expected, if only H2S is increased by 1 unit according to the fitted model?
+
+```{r }
+
+```
+
+If we increased the H2s by 1 unit according to the fitted model the change is taste is expected to increase by 3.9118
+
+### C. Calculate R2 and adjusted R2 for this model.
+
+```{r}
+summary(mutiLinearModel)$r.squared
+summary(mutiLinearModel)$adj.r.squared
+```
+
+The calculated r\^2 and adjusted r\^2 is 0.6517747 and 0.6115948
+
+### D. Construct the analysis-of-variance table and test for significance of regression.
+
+```{r}
+
+anova(mutiLinearModel)
+
+```
+
+| Col1      | Col2 | Col3    | Col4    | Col5    | Col6      | Col7 |
+|-----------|------|---------|---------|---------|-----------|------|
+| respsonse | df   | sum sq  | mean sq | F value | P value   |      |
+| acetic    | 1    | 2314.14 | 2314.14 | 22.5481 | 6.528e-05 |      |
+| h2s       | 1    | 2147.02 | 2147.02 | 20.9197 | 0.0001035 |      |
+| lactic    | 1    | 533.32  | 533.32  | 5.1964  | 0.0310795 |      |
+| resisual  | 26   | 2668.41 | 102.63  |         |           |      |
+| total     | 29   |         |         |         |           |      |
+
+## Problem 2
+
+### A. Report your fitted model;
+
+```{r}
+
+data(sat,package = "faraway")
+
+
+satModel <-lm(total~expend+ratio+salary,data = sat)
+
+summary(satModel)
+
+```
+
+My fitted model is y=1069.234+16.469x1+ 6.330x2-8.823x3
+
+### B. Interpret your estimated ˆβ salary.
+
+```{r}
+
+```
+
+Our estimated beta4 salary is very significant to our model with a p value of 0.667 and a t value of -1.878
