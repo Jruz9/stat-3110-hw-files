@@ -11,10 +11,7 @@ output: word_document
 
 ## R Markdown
 
-
-
-# Homework 9 
-
+# Homework 9
 
 ## Question 1 : For the prostate data in package faraway, fit a linear regression model with lpsa as the response variable and the other variables as predictors.
 
@@ -29,19 +26,16 @@ prostateModel <-lm(lpsa~., data = prostate)
 
 summary(prostateModel)
 
-residuals(prostateModel)
-
 
 plot(fitted(prostateModel), residuals(prostateModel), xlab="Fitted", ylab="Residuals")
-plot(sModel)
+plot(prostateModel)
 
 
 
 
 ```
 
-
-
+In our plots our data shows that our points are above and below our y- axis at 0, showing that our variance is constant and symmetrical.
 
 ### (b) Check the normality assumption by using QQ plot;
 
@@ -54,6 +48,7 @@ qqnorm(residuals(prostateModel), ylab="Residuals")
 
 ```
 
+Using a QQ plot to check our normality assumption, we see that since out points follow a straight line, we can assume that it follows a normal distribution.
 
 ### (c) Check for any leverage points and generate a half normal plot of hat values;
 
@@ -66,8 +61,7 @@ head(hatv)
 hatv[which(hatv>2*mean(hatv))]
 ```
 
-
-
+Checking our leverage points we can see that we have 5 leverage points significantly different from the rest in our dataset.
 
 ```{r}
 
@@ -75,8 +69,9 @@ hatv[which(hatv>2*mean(hatv))]
 halfnorm(hatv, nlab=4, labs=row.names(prostate), ylab="Leverages")
 ```
 
-### (d) Check for any outliers in the data set;
+Using a half normal chart, we can see that the five leverage points we calculated are ploted and show us how much they can effect our model.
 
+### (d) Check for any outliers in the data set;
 
 ```{r}
 # calculate outlier in our data set
@@ -97,20 +92,22 @@ max(abs(stud))
 
 ```
 
+In our calculation we found that 2.61998 was a significant outlier in our data set.
 
 ### (e) Check for any influential data points.
 
 ```{r pressure, echo=FALSE}
 cook <- cooks.distance(prostateModel)
-library(faraway)
+
 halfnorm(cook, nlab=3, labs=row.names(prostate), ylab="Cook statistics")
 ```
 
+Using half normal to find any influential points, we found though using cook statistics that there are 3 big possible influential points in our data.
+
 ## Question 2. (problem 5 on page 110) For the prostate data, fit a model with lpsa as the response and the other variables as predictors.
 
+### (A) Compute and comment on the condition numbers;
 
-
-###(A) Compute and comment on the condition numbers;
 ```{r}
 #Calculate the conditional numbers(co linearity)
 
@@ -121,6 +118,7 @@ summary(prostateModel)
 ```
 
 #### Conditional numbers
+
 ```{r}
 
 x <- model.matrix(prostateModel)[, -1]
@@ -129,26 +127,37 @@ e$val
 
 ```
 
+Here we have the calculated conditional numbers
+
+#### Kappa calculations
+
 ```{r}
 kappa <- sqrt(e$val[1]/e$val)
 kappa>30
 ```
 
+Calculating our conditional numbers and trying to find our which conditional numbers have a k greater than 30 we see that the problems in our dataset are being caused by more than 1 linear combination.
 
+### (B) Compute and comment on the correlations between the predictors;
 
-###(B) Compute an comment on the correlations between the predictors;
 ```{r}
 round(cor(prostate[, -8]), 2)
 ```
 
+From looking at our correlation matrix we see that: - lcavol correlates with svi (0.54), lcp(0.68) and lpsa (0.73) - svi correlates with lcp(0.67)
 
-###(C) Compute the variance inflation factors (VIFs).
+From these correlation we can see that lacvol and svi correlated with the other predictors the higher than the rest.
+
+### (C) Compute the variance inflation factors (VIFs).
+
 ```{r}
 
 Rj2 <- summary(lm(x[, 1]~x[, -1]))$r.squared
 1/(1-Rj2)
 
 ```
+
+Computing our VIF we find that we get a value of 2.054115 for our lcavol .
 
 ```{r}
 
@@ -157,3 +166,4 @@ vif(prostateModel)
 
 ```
 
+Computing the rest of the of the VIF in our model we find that there is a above average amount of inflation in our variation for our data set.
