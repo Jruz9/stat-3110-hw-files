@@ -8,7 +8,7 @@ output: word_document
 
 # STAT 3130 Homework 10 
 
-## Problem 1: Use the prostate data with lpsa as the response and the other variables as predictors. Implement the followingvariable selection criterion to determine the final model using forward selection procedure:
+## Problem 1: Use the prostate data with lpsa as the response and the other variables as predictors. Implement the following variable selection criterion to determine the final model using forward selection procedure:
 
 - AIC
 - BIC
@@ -18,9 +18,65 @@ output: word_document
 
 ```{r}
 
+#Loads data set
 library(faraway)
+
+data(prostate,package = "faraway")
+
+
+install.packages("leaps")
+install.packages("MASS")
 
 
 
 
 ```
+
+
+
+### AIC(forward) Pass
+```{r}
+library(leaps)
+library(MASS)
+
+null.fit <- lm(lpsa~1, prostate)
+full.fit <- lm(lpsa~., prostate)
+step.f <- stepAIC(null.fit, list(upper=full.fit), direction="forward")
+
+
+```
+```{r}
+step.f$anova
+```
+```{r}
+print(summary(step.f))
+```
+### BIC (Forward)
+
+```{r}
+## BIC
+b.forward <- regsubsets(lpsa~., data=prostate, method="forward")
+res.f <- summary(b.forward)
+names(res.f)
+```
+
+
+```{r}
+res.f$which[which.min(res.f$bic), ]
+```
+### Adjusted R^2
+```{r}
+
+plot(2:9, res.f$adjr2, xlab="No. of Parameters", ylab="Adjusted R-square")
+```
+
+###  Mallows Cp Statistics
+
+```{r}
+# Cp statistic
+plot(2:9, res.f$cp, xlab="No. of Parameters", ylab="Cp Statistic")
+abline(0, 1)
+
+
+```
+
