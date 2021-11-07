@@ -1,0 +1,26 @@
+---
+title: "stat3110-Homework10"
+author: "Jose Cruz"
+date: "11/6/2021"
+output: word_document
+---
+
+
+# STAT 3130 Homework 10 
+
+## Problem 1: Use the prostate data with lpsa as the response and the other variables as predictors. Implement the followingvariable selection criterion to determine the final model using forward selection procedure:
+
+- AIC
+- BIC
+- Adjusted R2
+- Mallows Cp
+
+
+```{r}
+
+library(faraway)
+
+
+
+
+```
